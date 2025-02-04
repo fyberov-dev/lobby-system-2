@@ -1,0 +1,6 @@
+eclipse.project.name = appName + '-shared'
+
+dependencies {
+  annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+  compileOnly "org.projectlombok:lombok:$lombokVersion"
+}
