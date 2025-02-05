@@ -11,6 +11,8 @@ import ee.taltech.game.shared.player.Player;
 import lombok.Getter;
 
 import java.lang.management.PlatformLoggingMXBean;
+import java.lang.reflect.Array;
+import java.util.Arrays;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {

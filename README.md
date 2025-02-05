@@ -117,10 +117,93 @@ private void registerKryo() {
 ```
 *The class must be registered on both the server and the client.
 
+### 2.6 Request handling on the server
 
+Add new ```ServerListener``` on the server and start listening it.
 
+_ServerLauncher.java_
+```java
+public ServerLauncher() {
+    instance = this;
+    registerKryo();
+    addListener(new ServerListener());
+}
+```
 
+And now handle the request from the client.
 
+_ServerListener.java_
+```java
+public class ServerListener implements Listener {
+
+    @Override
+    public void received(Connection connection, Object object) {
+        switch (object) {
+            case RegisterPlayerPacket packet -> // if object is instance of RegisterPlayerPacket
+                ServerLauncher.getInstance().registerPlayer(connection.getID(), packet.getName());
+            default ->
+                // leave it like this
+                System.out.println("PACKET SKIPPED");
+        }
+    }
+}
+```
+
+_ServerLauncher.java_
+```java
+public void registerPlayer(int id, String name) {
+    Player player = new Player(id, name);
+    players.put(id, player);
+    sendToUDP(id, new RegisterPlayerPacket(name));
+}
+```
+
+### 2.7 Request handling on the client
+
+First of all, add listener to the client and handle ```RegisterPlayerPacket```.
+
+_ClientListener.java_
+```java
+public class ClientListener implements Listener {
+
+    @Override
+    public void received(Connection connection, Object object) {
+        switch (object) {
+            case RegisterPlayerPacket packet ->
+                Main.getInstance().createPlayer(connection.getID(), packet.getName());
+            default -> System.out.println("Skipped package");
+        }
+    }
+}
+```
+
+After that save newly created player and switch the screen to the ```LobbiesListScreen```.
+
+_Main.java_
+```java
+private Player currentPlayer;
+
+public void createPlayer(int id, String username) {
+    currentPlayer = new Player(id, username);
+    Gdx.app.postRunnable(new SetScreenRunnable(new LobbiesListScreen()));
+}
+```
+
+### 2.8 Use Runnable for changing screen
+
+_SetScreenRunnable.java_
+```java
+@AllArgsConstructor
+public class SetScreenRunnable implements Runnable {
+
+    private Screen screen;
+
+    @Override
+    public void run() {
+        Main.getInstance().setScreen(screen);
+    }
+}
+```
 
 
 
