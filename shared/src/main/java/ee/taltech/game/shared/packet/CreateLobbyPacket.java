@@ -1,5 +1,6 @@
-package ee.taltech.game.shared.player;
+package ee.taltech.game.shared.packet;
 
+import ee.taltech.game.shared.lobby.Lobby;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,8 +8,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
-public class Player {
+public class CreateLobbyPacket {
 
-    private int id;
-    private String name;
+    private Lobby lobby;
 }

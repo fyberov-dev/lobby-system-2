@@ -5,15 +5,15 @@ import com.badlogic.gdx.Gdx;
 import ee.taltech.game.network.ClientLauncher;
 import ee.taltech.game.runnable.SetScreenRunnable;
 import ee.taltech.game.screen.LobbiesListScreen;
+import ee.taltech.game.screen.LobbyScreen;
 import ee.taltech.game.screen.MainScreen;
+import ee.taltech.game.shared.lobby.Lobby;
+import ee.taltech.game.shared.packet.CreateLobbyPacket;
 import ee.taltech.game.shared.packet.RegisterPlayerPacket;
 import ee.taltech.game.shared.player.Player;
 import lombok.Getter;
 
-import java.lang.management.PlatformLoggingMXBean;
-import java.lang.reflect.Array;
-import java.util.Arrays;
-
+@Getter
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends Game {
 
@@ -21,6 +21,7 @@ public class Main extends Game {
     private static Main instance;
     private ClientLauncher client = null;
     private Player currentPlayer;
+    private Lobby currentLobby;
 
     public Main() {
         instance = this;
@@ -39,6 +40,15 @@ public class Main extends Game {
     public void createPlayer(int id, String username) {
         currentPlayer = new Player(id, username);
         Gdx.app.postRunnable(new SetScreenRunnable(new LobbiesListScreen()));
+    }
+
+    public void createLobby() {
+        client.sendUDP(new CreateLobbyPacket());
+    }
+
+    public void joinLobby(Lobby lobby) {
+        currentLobby = lobby;
+        Gdx.app.postRunnable(new SetScreenRunnable(new LobbyScreen(currentLobby)));
     }
 
     private static final String LOCALHOST = "127.0.0.1";
