@@ -4,10 +4,14 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Server;
 import ee.taltech.game.server.listener.ServerListener;
 import ee.taltech.game.server.system.Game;
+import ee.taltech.game.shared.lobby.Lobby;
+import ee.taltech.game.shared.packet.CreateLobbyPacket;
 import ee.taltech.game.shared.packet.RegisterPlayerPacket;
+import ee.taltech.game.shared.player.Player;
 import lombok.Getter;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 @Getter
 public class ServerLauncher extends Server {
@@ -27,7 +31,12 @@ public class ServerLauncher extends Server {
         Kryo kryo = getKryo();
 
         // TODO : Register classes
+        kryo.register(HashMap.class);
+
         kryo.register(RegisterPlayerPacket.class);
+        kryo.register(CreateLobbyPacket.class);
+        kryo.register(Lobby.class);
+        kryo.register(Player.class);
     }
 
     private static final int DEFAULT_TCP_PORT = 8080;

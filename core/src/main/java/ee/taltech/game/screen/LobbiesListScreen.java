@@ -3,6 +3,7 @@ package ee.taltech.game.screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import ee.taltech.game.listener.button.CreateLobbyClickListener;
 
 public class LobbiesListScreen extends Screen {
 
@@ -12,6 +13,7 @@ public class LobbiesListScreen extends Screen {
     void createInterface() {
         Label label = new Label("Lobbies", skin);
         TextButton addLobbyButton = new TextButton("Add Lobby", skin);
+        addLobbyButton.addListener(new CreateLobbyClickListener());
         Table table = new Table();
         lobbies = new Table();
         table.setFillParent(true);

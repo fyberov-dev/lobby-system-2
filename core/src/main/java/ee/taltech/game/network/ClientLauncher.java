@@ -3,9 +3,13 @@ package ee.taltech.game.network;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryonet.Client;
 import ee.taltech.game.listener.ClientListener;
+import ee.taltech.game.shared.lobby.Lobby;
+import ee.taltech.game.shared.packet.CreateLobbyPacket;
 import ee.taltech.game.shared.packet.RegisterPlayerPacket;
+import ee.taltech.game.shared.player.Player;
 
 import java.io.IOException;
+import java.util.HashMap;
 
 public class ClientLauncher extends Client {
 
@@ -25,7 +29,12 @@ public class ClientLauncher extends Client {
         Kryo kryo = getKryo();
 
         // register classes below
+        kryo.register(HashMap.class);
+
         kryo.register(RegisterPlayerPacket.class);
+        kryo.register(CreateLobbyPacket.class);
+        kryo.register(Lobby.class);
+        kryo.register(Player.class);
     }
 
     public void connectToServer() {

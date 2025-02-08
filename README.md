@@ -6,7 +6,7 @@ This is a basic guide how to create the lobby system using LibGDX on the client 
 
 ## 2. User register
 
-### 2.1 Create registration form
+### 2.1. Create registration form
 
 First of all, on client you need to add a new package ```screen``` and add new class ```MainScreen.java```.
 This screen will be dedicated to register the player.
@@ -43,7 +43,7 @@ public void render(float delta) {
 }
 ```
 
-### 2.2 Listen click on the button
+### 2.2. Listen clicks on the button
 
 Now add a new class ```RegisterPlayerClickListener``` that will extend ```ClickListener```.
 It will have a constructor that takes in string ```username```.
@@ -63,7 +63,7 @@ public class RegisterPlayerClickListener extends ClickListener {
 }
 ```
 
-### 2.3 Lombok (Additional)
+### 2.3. Lombok (Additional)
 
 For this guide I am using [lombok](https://projectlombok.org/).
 
@@ -76,7 +76,7 @@ compileOnly "org.projectlombok:lombok:1.18.34"
 ```
 _*Update version if needed_
 
-### 2.4 Instance (Additional)
+### 2.4. Instance (Additional)
 
 And I am using ```instance``` to refer to the main class.
 
@@ -90,7 +90,7 @@ public Client() {
 }
 ```
 
-### 2.5 Send UDP request to the server
+### 2.5. Send UDP request to the server
 
 Before sending our request to the server we need to connect to the server.
 
@@ -117,7 +117,7 @@ private void registerKryo() {
 ```
 *The class must be registered on both the server and the client.
 
-### 2.6 Request handling on the server
+### 2.6. Request handling on the server
 
 Add new ```ServerListener``` on the server and start listening it.
 
@@ -158,7 +158,22 @@ public void registerPlayer(int id, String name) {
 }
 ```
 
-### 2.7 Request handling on the client
+And our `Player` class (I have it in the shared package).
+
+_Player.java_
+```java
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+public class Player {
+
+    private int id;
+    private String name;
+}
+```
+
+
+### 2.7. Request handling on the client
 
 First of all, add listener to the client and handle ```RegisterPlayerPacket```.
 
@@ -189,7 +204,7 @@ public void createPlayer(int id, String username) {
 }
 ```
 
-### 2.8 Use Runnable for changing screen
+### 2.8. Use Runnable for changing screen
 
 _SetScreenRunnable.java_
 ```java
@@ -204,7 +219,139 @@ public class SetScreenRunnable implements Runnable {
     }
 }
 ```
+*You need to use Runnable because the game and the kryonet connection are working on different Threads.
 
+## 3. Create Lobby
+
+### 3.1. Add lobby class
+
+Next step is add possibility to create lobbies.
+First of all, we will create the `Lobby` class.
+
+_Lobby.java_
+```java
+@Getter
+@NoArgsConstructor
+public class Lobby {
+
+    private static int nextId = 0;
+
+    private int id;
+    private String name;
+    private Map<Integer, Player> players;
+
+    /**
+     * Initialize lobby and add player to it.
+     *
+     * @param player creator of the lobby
+     */
+    public Lobby(Player player) {
+        this.id = nextId++;
+        this.name = generateLobbyName(player);
+        this.players = new HashMap<>();
+        joinLobby(player);
+    }
+
+    /**
+     * @param player player to add to the lobby
+     */
+    public void joinLobby(Player player) {
+        players.put(player.getId(), player);
+    }
+
+    /**
+     * @param player creator name to show in the name of the lobby
+     * @return string in format "{playerName}'s lobby"
+     */
+    private String generateLobbyName(Player player) {
+        return String.format("%s's lobby", player.getName());
+    }
+}
+```
+
+I put it in the shared folder
+
+### 3.2. Listen clicks on the button
+
+_LobbiesListScreen.java_
+
+```java
+TextButton addLobbyButton = new TextButton("Add Lobby", skin);
+addLobbyButton.addListener(new CreateLobbyClickListener());
+```
+
+_CreateLobbyClickListener.java_
+```java
+public class CreateLobbyClickListener extends ClickListener {
+
+    @Override
+    public void clicked(InputEvent event, float x, float y) {
+        Main.getInstance().createLobby();
+    }
+}
+```
+
+Send just empty ```CreateLobbyPacket``` class because when we create the lobby we only need the player ID.
+Player ID we will get with the request.
+
+_Main.java_
+```java
+public void createLobby() {
+    client.sendUDP(new CreateLobbyPacket());
+}
+```
+
+_CreateLobbyPacket.java_
+
+```java
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+public class CreateLobbyPacket {
+
+    private Lobby lobby;
+}
+```
+
+*hold lobby for the response from the server
+
+### 3.3. Handle the request on the server
+
+_ServerListener.java_
+```java
+case CreateLobbyPacket packet ->
+    ServerLauncher.getInstance().getGame().createLobby(connection.getID());
+```
+
+We need to add new map of lobbies to the server where we will store all the lobbies.
+
+_Game.java_
+```java
+private Map<Integer, Lobby> lobbies = new HashMap<>();
+
+public void createLobby(int id) {
+    Player player = players.get(id);
+    Lobby lobby = new Lobby(player);
+    lobbies.put(lobby.getId(), lobby);
+    ServerLauncher.getInstance().sendToUDP(id, new CreateLobbyPacket(lobby));
+}
+```
+
+### 3.4. Handle the request on the client
+
+_ClientListener.java_
+```java
+case CreateLobbyPacket packet ->
+    Main.getInstance().joinLobby(packet.getLobby());
+```
+
+_Main.java_
+```java
+public void joinLobby(Lobby lobby) {
+    currentLobby = lobby;
+    Gdx.app.postRunnable(new SetScreenRunnable(new LobbyScreen(currentLobby)));
+}
+```
 
 
 
