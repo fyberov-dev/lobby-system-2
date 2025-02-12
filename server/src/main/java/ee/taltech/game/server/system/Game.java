@@ -26,4 +26,12 @@ public class Game {
         lobbies.put(lobby.getId(), lobby);
         ServerLauncher.getInstance().sendToUDP(id, new CreateLobbyPacket(lobby));
     }
+
+    public void leaveLobby(int playerId, int lobbyId) {
+        Lobby lobby = lobbies.get(lobbyId);
+        lobby.kickPlayer(playerId);
+        if (lobby.getPlayersNumber() == 0) {
+            lobbies.remove(lobbyId);
+        }
+    }
 }

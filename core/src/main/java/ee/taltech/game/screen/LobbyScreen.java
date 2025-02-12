@@ -2,18 +2,14 @@ package ee.taltech.game.screen;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.scenes.scene2d.ui.Container;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
-import com.badlogic.gdx.scenes.scene2d.utils.NinePatchDrawable;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import com.badlogic.gdx.utils.Align;
 import ee.taltech.game.Main;
+import ee.taltech.game.listener.button.LeaveLobbyClickListener;
 import ee.taltech.game.shared.lobby.Lobby;
 import ee.taltech.game.shared.player.Player;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -23,16 +19,18 @@ public class LobbyScreen extends Screen {
     private Table playersTable;
 
     @Override
-    public void createInterface() {
+    protected void createInterface() {
         stage.setDebugAll(true);
         Table table = new Table();
         table.setFillParent(true);
-        TextButton button = createBackButton();
+        TextButton backButton = createBackButton();
+        backButton.addListener(new LeaveLobbyClickListener(lobby.getId()));
         Label lobbyNameLabel = new Label(lobby.getName(), skin);
+
         playersTable = new Table();
 
         table.defaults().space(25);
-        table.add(button);
+        table.add(backButton);
         table.add(lobbyNameLabel);
         table.row();
         table.add(playersTable).colspan(2).fillX();

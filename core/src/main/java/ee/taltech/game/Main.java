@@ -9,6 +9,7 @@ import ee.taltech.game.screen.LobbyScreen;
 import ee.taltech.game.screen.MainScreen;
 import ee.taltech.game.shared.lobby.Lobby;
 import ee.taltech.game.shared.packet.CreateLobbyPacket;
+import ee.taltech.game.shared.packet.LeaveLobbyPacket;
 import ee.taltech.game.shared.packet.RegisterPlayerPacket;
 import ee.taltech.game.shared.player.Player;
 import lombok.Getter;
@@ -49,6 +50,12 @@ public class Main extends Game {
     public void joinLobby(Lobby lobby) {
         currentLobby = lobby;
         Gdx.app.postRunnable(new SetScreenRunnable(new LobbyScreen(currentLobby)));
+    }
+
+    public void leaveLobby(int id) {
+        client.sendUDP(new LeaveLobbyPacket(id));
+        currentLobby = null;
+        Gdx.app.postRunnable(new SetScreenRunnable(new LobbiesListScreen()));
     }
 
     private static final String LOCALHOST = "127.0.0.1";
