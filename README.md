@@ -422,7 +422,7 @@ public int getPlayersNumber() {
 }
 ```
 
-It is not needed to send something back to the client, because you are already leaving the lobby
+It is not necessary to send anything back to the client, because you are already leaving the lobby
 
 
 

@@ -32,8 +32,6 @@ abstract class Screen extends ScreenAdapter {
         
         stage.act(delta);
         stage.draw();
-
-        Integer i = Integer.valueOf(5);
     }
 
     @Override
