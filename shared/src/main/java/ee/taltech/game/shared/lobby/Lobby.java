@@ -36,6 +36,14 @@ public class Lobby {
         players.put(player.getId(), player);
     }
 
+    public void kickPlayer(int playerId) {
+        players.remove(playerId);
+    }
+
+    public int getPlayersNumber() {
+        return players.keySet().size();
+    }
+
     /**
      * @param player creator name to show in the name of the lobby
      * @return string in format "{playerName}'s lobby"

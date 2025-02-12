@@ -6,6 +6,7 @@ import ee.taltech.game.server.listener.ServerListener;
 import ee.taltech.game.server.system.Game;
 import ee.taltech.game.shared.lobby.Lobby;
 import ee.taltech.game.shared.packet.CreateLobbyPacket;
+import ee.taltech.game.shared.packet.LeaveLobbyPacket;
 import ee.taltech.game.shared.packet.RegisterPlayerPacket;
 import ee.taltech.game.shared.player.Player;
 import lombok.Getter;
@@ -37,6 +38,7 @@ public class ServerLauncher extends Server {
         kryo.register(CreateLobbyPacket.class);
         kryo.register(Lobby.class);
         kryo.register(Player.class);
+        kryo.register(LeaveLobbyPacket.class);
     }
 
     private static final int DEFAULT_TCP_PORT = 8080;

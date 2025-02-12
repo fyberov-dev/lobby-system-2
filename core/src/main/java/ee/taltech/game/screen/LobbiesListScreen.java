@@ -10,7 +10,7 @@ public class LobbiesListScreen extends Screen {
     private Table lobbies;
 
     @Override
-    void createInterface() {
+    protected void createInterface() {
         Label label = new Label("Lobbies", skin);
         TextButton addLobbyButton = new TextButton("Add Lobby", skin);
         addLobbyButton.addListener(new CreateLobbyClickListener());

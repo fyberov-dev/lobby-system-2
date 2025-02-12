@@ -22,16 +22,18 @@ abstract class Screen extends ScreenAdapter {
 
         createInterface();
     }
-
-    abstract void createInterface();
+    
+    protected abstract void createInterface();
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.157f, 0.196f, 0.522f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
+        
         stage.act(delta);
         stage.draw();
+
+        Integer i = Integer.valueOf(5);
     }
 
     @Override

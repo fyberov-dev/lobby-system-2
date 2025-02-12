@@ -43,7 +43,7 @@ public void render(float delta) {
 }
 ```
 
-### 2.2. Listen clicks on the button
+### 2.2. Add click listener to the button
 
 Now add a new class ```RegisterPlayerClickListener``` that will extend ```ClickListener```.
 It will have a constructor that takes in string ```username```.
@@ -271,7 +271,7 @@ public class Lobby {
 
 I put it in the shared folder
 
-### 3.2. Listen clicks on the button
+### 3.2. Add click listener to the button
 
 _LobbiesListScreen.java_
 
@@ -352,6 +352,84 @@ public void joinLobby(Lobby lobby) {
     Gdx.app.postRunnable(new SetScreenRunnable(new LobbyScreen(currentLobby)));
 }
 ```
+
+## 4. Lobby Leaving
+
+Implementation of leaving the lobby should be similar to the implementation of creating the lobby
+
+### 4.1. Add click listener to the button
+
+_LobbyScreen.java_
+```java
+TextButton backButton = new TextButton("", skin);
+backButton.addListener(new LeaveLobbyClickListener(lobby.getId()));
+```
+
+_LeaveLobbyClickListener.java_
+```java
+@AllArgsConstructor
+public class LeaveLobbyClickListener extends ClickListener {
+
+    private int id;
+
+    @Override
+    public void clicked(InputEvent event, float x, float y) {
+        Main.getInstance().leaveLobby(id);
+    }
+}
+```
+
+### 4.2. Handle click on the button
+
+_Main.java_
+```java
+public void leaveLobby(int id) {
+    client.sendUDP(new LeaveLobbyPacket(id));
+    currentLobby = null; // clear lobby locally
+    Gdx.app.postRunnable(new SetScreenRunnable(new LobbiesListScreen()));
+}
+```
+
+### 4.3. Handle Packet on the server
+
+_ServerListener.java_
+```java
+case LeaveLobbyPacket packet ->
+    ServerLauncher.getInstance().getGame().leaveLobby(connection.getID(), packet.getId());
+```
+
+_Game.java_
+```java
+public void leaveLobby(int playerId, int lobbyId) {
+    Lobby lobby = lobbies.get(lobbyId);
+    lobby.kickPlayer(playerId);
+    if (lobby.getPlayersNumber() == 0) {
+        lobbies.remove(lobbyId);
+    }
+}
+```
+
+### 4.4. Update Lobby class
+
+_Lobby.java_
+```java
+public void kickPlayer(int playerId) {
+    players.remove(playerId);
+}
+
+public int getPlayersNumber() {
+    return players.keySet().size();
+}
+```
+
+It is not needed to send something back to the client, because you are already leaving the lobby
+
+
+
+
+
+
+
 
 
 

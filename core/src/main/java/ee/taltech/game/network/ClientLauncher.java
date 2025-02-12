@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Client;
 import ee.taltech.game.listener.ClientListener;
 import ee.taltech.game.shared.lobby.Lobby;
 import ee.taltech.game.shared.packet.CreateLobbyPacket;
+import ee.taltech.game.shared.packet.LeaveLobbyPacket;
 import ee.taltech.game.shared.packet.RegisterPlayerPacket;
 import ee.taltech.game.shared.player.Player;
 
@@ -35,6 +36,7 @@ public class ClientLauncher extends Client {
         kryo.register(CreateLobbyPacket.class);
         kryo.register(Lobby.class);
         kryo.register(Player.class);
+        kryo.register(LeaveLobbyPacket.class);
     }
 
     public void connectToServer() {

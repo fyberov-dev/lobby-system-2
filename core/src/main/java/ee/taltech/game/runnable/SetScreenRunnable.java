@@ -2,7 +2,6 @@ package ee.taltech.game.runnable;
 
 import com.badlogic.gdx.Screen;
 import ee.taltech.game.Main;
-import ee.taltech.game.network.ClientLauncher;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
