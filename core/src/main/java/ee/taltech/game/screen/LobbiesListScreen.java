@@ -3,11 +3,18 @@ package ee.taltech.game.screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+
+import ee.taltech.game.Main;
 import ee.taltech.game.listener.button.CreateLobbyClickListener;
+import ee.taltech.game.shared.lobby.Lobby;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class LobbiesListScreen extends Screen {
 
     private Table lobbies;
+    private Map<Integer, Table> lobbyActors = new HashMap<>();
 
     @Override
     protected void createInterface() {
@@ -23,13 +30,20 @@ public class LobbiesListScreen extends Screen {
         table.row();
         table.add(lobbies).colspan(2).fillX();
 
-        addLobby();
-
         stage.addActor(table);
+
+        Main.getInstance().getLobbies();
     }
 
-    private void addLobby() {
-        TextButton lobby = new TextButton("123's lobby", skin);
-        lobbies.add(lobby).expandX().fillX();
+    public void addLobby(Lobby lobby) {
+        TextButton lobbyButton = new TextButton(lobby.getName(), skin);
+        lobbies.add(lobbyButton).expandX().fillX();
+        lobbies.row();
+        lobbyActors.put(lobby.getId(), lobbyButton);
+    }
+
+    public void removeLobby(int lobbyId) {
+        Table lobby = lobbyActors.remove(lobbyId);
+        lobbies.removeActor(lobby);
     }
 }
