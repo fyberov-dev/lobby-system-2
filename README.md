@@ -424,12 +424,160 @@ public int getPlayersNumber() {
 
 It is not necessary to send anything back to the client, because you are already leaving the lobby
 
+## 5. Show lobbies
 
+### 5.1. Hold variables 
 
+To show lobbies you need to hold next variables:
 
+_LobbiesListScreen.java_
+```java
+private Table lobbies;
+private Map<Integer, Table> lobbyActors = new HashMap<>();
+```
 
+Lobbies table will have all the lobby Actors in it.
+And the map `lobbyActors` is needed to easily find the actor and delete it in the future.
 
+### 5.2. Request lobbies
 
+When you are getting to the `LobbiesListScreen` after `show` method is executed request to the server is sent.
 
+_LobbiesListScreen.java_
+```java
+@Override
+protected void createInterface() {
+    ...
+    Main.getInstance().getLobbies();
+}
+```
+
+_Main.java_
+```java
+public void getLobbies() {
+    client.sendUDP(new GetLobbiesPacket());
+}
+```
+
+_GetLobbiesPacket.java_
+```java
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+public class GetLobbiesPacket implements Packet {
+    
+    private Map<Integer, Lobby> lobbies;
+}
+```
+
+When you are sending request to the server you can leave the packet empty. As the response you get packet with the lobbies list.
+
+### 5.3. Handle the request on the server
+
+_ServerListener.java_
+```java
+case GetLobbiesPacket packet ->
+    ServerLauncher.getInstance().getGame().getLobbies(connection.getID());
+```
+
+_Game.java_
+```java
+public void getLobbies(int id) {
+    ServerLauncher.getInstance().sendToUDP(id, new GetLobbiesPacket(lobbies));
+}
+```
+
+### 5.4. Update existing code
+
+Now we can add some changes to our existing code.\
+If lobby is created -> send lobbies
+
+_Game.java_
+```java
+public void createLobby(int id) {
+    ...
+    ServerLauncher.getInstance().sendToAllExceptUDP(id, new GetLobbiesPacket(lobbies));
+}
+```
+
+*To optimize you can send this packet only to those people who are searching for the lobby. 
+To do this you can add to the `Player` class new variable, for example `state` and set it as the `State.SEARCHING`.
+After just iterate all the players and send lobbies to the people with `State.SEARCHING`
+
+### 5.5. Handle request on the client
+
+_ClientListener.java_
+```java
+case GetLobbiesPacket packet ->
+    Main.getInstance().updateLobbies(packet.getLobbies());
+```
+
+First of all you need to check if the player is in the `LobbiesListScreen` to prevent exceptions.
+Then add all the lobbies to the screen.
+
+_Main.java_
+```java
+public void updateLobbies(Map<Integer, Lobby> lobbies) {
+    if (getScreen() instanceof LobbiesListScreen lobbiesListScreen) {
+        for (Lobby lobby : lobbies.values()) {
+            lobbiesListScreen.addLobby(lobby);
+        }
+    }
+}
+```
+
+_LobbiesListScreen.java_
+```java
+public void addLobby(Lobby lobby) {
+    TextButton lobbyButton = new TextButton(lobby.getName(), skin);
+    lobbies.add(lobbyButton).expandX().fillX();
+    lobbies.row();
+    lobbyActors.put(lobby.getId(), lobbyButton);
+}
+```
+
+## 6. Delete lobby from list
+
+### 6.1 Update existing code
+
+When in the lobby is 0 players it will be deleted and after this you need to delete this lobby from lobbies list.
+
+_Game.java_
+```java
+public void leaveLobby(int playerId, int lobbyId) {
+    ...
+    if (lobby.getPlayersNumber() == 0) {
+        ...
+        ServerLauncher.getInstance().sendToAllExceptUDP(playerId, new DeleteLobbyPacket(lobbyId));
+    }
+}
+```
+
+### 6.2 Handle request on the client
+
+_ClientListener.java_
+```java
+case DeleteLobbyPacket packet ->
+    Main.getInstance().deleteLobby(packet.getLobbyId());
+```
+
+_Main.java_
+```java
+public void deleteLobby(int lobbyId) {
+    if (getScreen() instanceof LobbiesListScreen lobbiesListScreen) {
+        lobbiesListScreen.removeLobby(lobbyId);
+    }
+}
+```
+
+_LobbiesListScreen.java
+```java
+public void removeLobby(int lobbyId) {
+    Table lobby = lobbyActors.remove(lobbyId);
+    lobbies.removeActor(lobby);
+}
+```
+
+After this steps lobby will disappear from the list.
 
 

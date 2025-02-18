@@ -1,5 +1,8 @@
 package ee.taltech.game;
 
+import java.util.List;
+import java.util.Map;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import ee.taltech.game.network.ClientLauncher;
@@ -9,6 +12,7 @@ import ee.taltech.game.screen.LobbyScreen;
 import ee.taltech.game.screen.MainScreen;
 import ee.taltech.game.shared.lobby.Lobby;
 import ee.taltech.game.shared.packet.CreateLobbyPacket;
+import ee.taltech.game.shared.packet.GetLobbiesPacket;
 import ee.taltech.game.shared.packet.LeaveLobbyPacket;
 import ee.taltech.game.shared.packet.RegisterPlayerPacket;
 import ee.taltech.game.shared.player.Player;
@@ -56,6 +60,24 @@ public class Main extends Game {
         client.sendUDP(new LeaveLobbyPacket(id));
         currentLobby = null;
         Gdx.app.postRunnable(new SetScreenRunnable(new LobbiesListScreen()));
+    }
+
+    public void getLobbies() {
+        client.sendUDP(new GetLobbiesPacket());
+    }
+
+    public void updateLobbies(Map<Integer, Lobby> lobbies) {
+        if (getScreen() instanceof LobbiesListScreen lobbiesListScreen) {
+            for (Lobby lobby : lobbies.values()) {
+                lobbiesListScreen.addLobby(lobby);
+            }
+        }
+    }
+
+    public void deleteLobby(int lobbyId) {
+        if (getScreen() instanceof LobbiesListScreen lobbiesListScreen) {
+            lobbiesListScreen.removeLobby(lobbyId);
+        }
     }
 
     private static final String LOCALHOST = "127.0.0.1";

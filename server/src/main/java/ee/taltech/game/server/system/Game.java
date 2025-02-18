@@ -3,6 +3,8 @@ package ee.taltech.game.server.system;
 import ee.taltech.game.server.ServerLauncher;
 import ee.taltech.game.shared.lobby.Lobby;
 import ee.taltech.game.shared.packet.CreateLobbyPacket;
+import ee.taltech.game.shared.packet.DeleteLobbyPacket;
+import ee.taltech.game.shared.packet.GetLobbiesPacket;
 import ee.taltech.game.shared.packet.RegisterPlayerPacket;
 import ee.taltech.game.shared.player.Player;
 
@@ -25,6 +27,7 @@ public class Game {
         Lobby lobby = new Lobby(player);
         lobbies.put(lobby.getId(), lobby);
         ServerLauncher.getInstance().sendToUDP(id, new CreateLobbyPacket(lobby));
+        ServerLauncher.getInstance().sendToAllExceptUDP(id, new GetLobbiesPacket(lobbies));
     }
 
     public void leaveLobby(int playerId, int lobbyId) {
@@ -32,6 +35,11 @@ public class Game {
         lobby.kickPlayer(playerId);
         if (lobby.getPlayersNumber() == 0) {
             lobbies.remove(lobbyId);
+            ServerLauncher.getInstance().sendToAllExceptUDP(playerId, new DeleteLobbyPacket(lobbyId));
         }
+    }
+
+    public void getLobbies(int id) {
+        ServerLauncher.getInstance().sendToUDP(id, new GetLobbiesPacket(lobbies));
     }
 }
