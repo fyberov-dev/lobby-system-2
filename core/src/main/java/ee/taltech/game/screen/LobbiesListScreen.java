@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 
 import ee.taltech.game.Main;
 import ee.taltech.game.listener.button.CreateLobbyClickListener;
+import ee.taltech.game.listener.button.JoinLobbyClickListener;
 import ee.taltech.game.shared.lobby.Lobby;
 
 import java.util.HashMap;
@@ -37,6 +38,7 @@ public class LobbiesListScreen extends Screen {
 
     public void addLobby(Lobby lobby) {
         TextButton lobbyButton = new TextButton(lobby.getName(), skin);
+        lobbyButton.addListener(new JoinLobbyClickListener(lobby.getId()));
         lobbies.add(lobbyButton).expandX().fillX();
         lobbies.row();
         lobbyActors.put(lobby.getId(), lobbyButton);

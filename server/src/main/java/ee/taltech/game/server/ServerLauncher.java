@@ -8,7 +8,9 @@ import ee.taltech.game.shared.lobby.Lobby;
 import ee.taltech.game.shared.packet.CreateLobbyPacket;
 import ee.taltech.game.shared.packet.DeleteLobbyPacket;
 import ee.taltech.game.shared.packet.GetLobbiesPacket;
+import ee.taltech.game.shared.packet.JoinLobbyPacket;
 import ee.taltech.game.shared.packet.LeaveLobbyPacket;
+import ee.taltech.game.shared.packet.PlayerJoinedLobbyPacket;
 import ee.taltech.game.shared.packet.RegisterPlayerPacket;
 import ee.taltech.game.shared.player.Player;
 import lombok.Getter;
@@ -30,10 +32,11 @@ public class ServerLauncher extends Server {
         this.game = new Game();
     }
 
+
     private void registerKryo() {
         Kryo kryo = getKryo();
 
-        // TODO : Register classes
+        // Register classes
         kryo.register(HashMap.class);
 
         kryo.register(RegisterPlayerPacket.class);
@@ -43,6 +46,8 @@ public class ServerLauncher extends Server {
         kryo.register(LeaveLobbyPacket.class);
         kryo.register(GetLobbiesPacket.class);
         kryo.register(DeleteLobbyPacket.class);
+        kryo.register(JoinLobbyPacket.class);
+        kryo.register(PlayerJoinedLobbyPacket.class);
     }
 
     private static final int DEFAULT_TCP_PORT = 8080;
