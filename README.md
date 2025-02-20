@@ -580,4 +580,138 @@ public void removeLobby(int lobbyId) {
 
 After this steps lobby will disappear from the list.
 
+## 7. Join lobby
+
+### 7.1 Add click listeners to the lobbies
+
+_JoinLobbyClickListener.java_
+```java
+@AllArgsConstructor
+public class JoinLobbyClickListener extends ClickListener {
+
+    private final int lobbyId;
+
+    @Override
+    public void clicked(InputEvent event, float x, float y) {
+        Main.getInstance().getClient().sendUDP(new JoinLobbyPacket(lobbyId));
+    }
+}
+```
+
+Add to every lobby button click listener and set on every button unique id.
+
+_LobbiesListScreen.java_
+```java
+public void addLobby(Lobby lobby) {
+    TextButton lobbyButton = new TextButton(lobby.getName(), skin);
+    lobbyButton.addListener(new JoinLobbyClickListener(lobby.getId()));
+    ...
+}
+```
+
+### 7.2 Handle request on the server
+
+_ServerListener.java_
+```java
+case JoinLobbyPacket packet ->
+    ServerLauncher.getInstance().getGame().joinLobby(connection.getID(), packet.getLobbyId());
+```
+
+Add player to the lobby and send to every player in the lobby that player have joined.
+
+_Game.java_
+```java
+public void joinLobby(int id, int lobbyId) {
+    Player player = players.get(id);
+    Lobby lobby = lobbies.get(lobbyId);
+    lobby.joinLobby(player);
+    for (Player currentPlayer : lobby.getPlayers().values()) {
+        ServerLauncher.getInstance().sendToUDP(currentPlayer.getId(), new PlayerJoinedLobbyPacket(player, lobby));
+    }
+}
+```
+
+_PlayerJoinedLobbyPacket.java_
+```java
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
+public class PlayerJoinedLobbyPacket {
+
+    private Player player;
+    private Lobby lobby;
+}
+```
+
+### 7.3 Handle response on the client
+
+#### 7.3.1. Update existing code
+
+First of all, you need to update existing code.
+
+_ClientListener.java_
+```java
+case CreateLobbyPacket packet ->
+    Main.getInstance().joinLobby(Main.getInstance().getCurrentPlayer(), packet.getLobby());
+```
+
+_Main.java_
+```java
+public void joinLobby(Player player, Lobby lobby) {
+    currentLobby = lobby;
+    Gdx.app.postRunnable(new SetScreenRunnable(new LobbyScreen(currentLobby)));
+}
+```
+
+*`Player` is not used for now, but this method will be extended in the future
+
+#### 7.3.2. Handle response
+
+_ClientListener.java_
+```java
+case PlayerJoinedLobbyPacket packet ->
+    Main.getInstance().joinLobby(packet.getPlayer(), packet.getLobby());
+```
+
+Now we can update our `joinLobby` method
+
+_Main.java_
+```java
+public void joinLobby(Player player, Lobby lobby) {
+    if (player.getId() == currentPlayer.getId()) {
+        currentLobby = lobby;
+        Gdx.app.postRunnable(new SetScreenRunnable(new LobbyScreen(currentLobby)));
+    } else {
+        if (getScreen() instanceof LobbyScreen lobbyScreen) {
+            lobbyScreen.addPlayer(player);
+        }
+    }
+}
+```
+
+_LobbyScreen.java_
+```java
+public void addPlayer(Player player) {
+    Label playerNameLabel = new Label(player.getName(), skin);
+    playersTable.add(playerNameLabel).expandX().fillX();
+    playersTable.row();
+}
+```
+
+And when player joined the lobby, you need to add all existing players to the lobby interface
+
+_LobbyScreen.java_
+```java
+@Override
+protected void createInterface() {
+    ...
+    for (Player player : lobby.getPlayers().values()) {
+        addPlayer(player);
+    }
+}
+```
+
+
+
+
 

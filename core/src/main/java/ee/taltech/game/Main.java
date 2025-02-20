@@ -1,6 +1,5 @@
 package ee.taltech.game;
 
-import java.util.List;
 import java.util.Map;
 
 import com.badlogic.gdx.Game;
@@ -51,9 +50,15 @@ public class Main extends Game {
         client.sendUDP(new CreateLobbyPacket());
     }
 
-    public void joinLobby(Lobby lobby) {
-        currentLobby = lobby;
-        Gdx.app.postRunnable(new SetScreenRunnable(new LobbyScreen(currentLobby)));
+    public void joinLobby(Player player, Lobby lobby) {
+        if (player.getId() == currentPlayer.getId()) {
+            currentLobby = lobby;
+            Gdx.app.postRunnable(new SetScreenRunnable(new LobbyScreen(currentLobby)));
+        } else {
+            if (getScreen() instanceof LobbyScreen lobbyScreen) {
+                lobbyScreen.addPlayer(player);
+            }
+        }
     }
 
     public void leaveLobby(int id) {

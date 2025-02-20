@@ -7,7 +7,8 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 
-abstract class Screen extends ScreenAdapter {
+
+public abstract class Screen extends ScreenAdapter {
 
     protected Stage stage;
     protected Skin skin;
@@ -19,17 +20,15 @@ abstract class Screen extends ScreenAdapter {
         stage = new Stage(new FillViewport(Gdx.graphics.getWidth() / SCALING_FACTOR, Gdx.graphics.getHeight() / SCALING_FACTOR));
         Gdx.input.setInputProcessor(stage);
         skin = new Skin(Gdx.files.internal("ui/uiskin.json"));
-
         createInterface();
     }
-    
+
     protected abstract void createInterface();
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0.157f, 0.196f, 0.522f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        
         stage.act(delta);
         stage.draw();
     }

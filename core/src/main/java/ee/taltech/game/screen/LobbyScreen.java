@@ -6,7 +6,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
-import ee.taltech.game.Main;
 import ee.taltech.game.listener.button.LeaveLobbyClickListener;
 import ee.taltech.game.shared.lobby.Lobby;
 import ee.taltech.game.shared.player.Player;
@@ -34,12 +33,15 @@ public class LobbyScreen extends Screen {
         table.add(lobbyNameLabel);
         table.row();
         table.add(playersTable).colspan(2).fillX();
-        addPlayer(Main.getInstance().getCurrentPlayer());
+
+        for (Player player : lobby.getPlayers().values()) {
+            addPlayer(player);
+        }
 
         stage.addActor(table);
     }
 
-    private void addPlayer(Player player) {
+    public void addPlayer(Player player) {
         Label playerNameLabel = new Label(player.getName(), skin);
         playersTable.add(playerNameLabel).expandX().fillX();
         playersTable.row();

@@ -5,6 +5,7 @@ import com.esotericsoftware.kryonet.Listener;
 import ee.taltech.game.server.ServerLauncher;
 import ee.taltech.game.shared.packet.CreateLobbyPacket;
 import ee.taltech.game.shared.packet.GetLobbiesPacket;
+import ee.taltech.game.shared.packet.JoinLobbyPacket;
 import ee.taltech.game.shared.packet.LeaveLobbyPacket;
 import ee.taltech.game.shared.packet.RegisterPlayerPacket;
 
@@ -22,6 +23,8 @@ public class ServerListener implements Listener {
                 ServerLauncher.getInstance().getGame().leaveLobby(connection.getID(), packet.getId());
             case GetLobbiesPacket packet ->
                 ServerLauncher.getInstance().getGame().getLobbies(connection.getID());
+            case JoinLobbyPacket packet ->
+                ServerLauncher.getInstance().getGame().joinLobby(connection.getID(), packet.getLobbyId());
             default ->
                 // TODO : ADD LOGGER?
                 System.out.println("PACKET SKIPPED");
