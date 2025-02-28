@@ -14,8 +14,8 @@ import java.util.Map;
 
 public class Game {
 
-    private Map<Integer, Player> players = new HashMap<>();
-    private Map<Integer, Lobby> lobbies = new HashMap<>();
+    private final Map<Integer, Player> players = new HashMap<>();
+    private final Map<Integer, Lobby> lobbies = new HashMap<>();
 
     public void registerPlayer(int id, String name) {
         Player player = new Player(id, name);

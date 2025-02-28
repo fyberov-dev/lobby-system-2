@@ -13,7 +13,8 @@ eclipse.project.name = appName + '-server'
 
 dependencies {
   implementation project(':shared')
-  api "com.github.crykn:kryonet:2.22.9"
+  api "com.esotericsoftware:kryo:$kryoVersion"
+  api "com.github.crykn:kryonet:$kryoNetVersion"
   annotationProcessor "org.projectlombok:lombok:$lombokVersion"
   compileOnly "org.projectlombok:lombok:$lombokVersion"
 }

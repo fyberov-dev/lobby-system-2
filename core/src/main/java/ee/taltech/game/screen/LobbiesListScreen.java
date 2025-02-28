@@ -15,7 +15,7 @@ import java.util.Map;
 public class LobbiesListScreen extends Screen {
 
     private Table lobbies;
-    private Map<Integer, Table> lobbyActors = new HashMap<>();
+    private final Map<Integer, Table> lobbyActors = new HashMap<>();
 
     @Override
     protected void createInterface() {
