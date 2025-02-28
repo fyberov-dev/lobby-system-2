@@ -1,6 +1,8 @@
 eclipse.project.name = appName + '-shared'
 
 dependencies {
+  api "com.esotericsoftware:kryo:$kryoVersion"
+  api "com.github.crykn:kryonet:$kryoNetVersion"
   annotationProcessor "org.projectlombok:lombok:$lombokVersion"
   compileOnly "org.projectlombok:lombok:$lombokVersion"
 }
