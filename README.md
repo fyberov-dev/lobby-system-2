@@ -239,6 +239,16 @@ public class ClientListener implements Listener {
 }
 ```
 
+Start listening server responses on the client
+
+_ClientLauncher.java_
+```java
+private ClientLauncher() {
+    addListener(new ClientListener());
+    ...
+}
+```
+
 After that save newly created player and switch the screen to the ```LobbiesListScreen```.
 
 _Main.java_
@@ -635,7 +645,7 @@ public void leaveLobby(int playerId, int lobbyId) {
 }
 ```
 
-### 6.2 Handle request on the client
+### 6.2. Handle request on the client
 
 _ClientListener.java_
 ```java
@@ -663,7 +673,7 @@ After this steps lobby will disappear from the list.
 
 ## 7. Join lobby
 
-### 7.1 Add click listeners to the lobbies
+### 7.1. Add click listeners to the lobbies
 
 _JoinLobbyClickListener.java_
 ```java
@@ -690,7 +700,7 @@ public void addLobby(Lobby lobby) {
 }
 ```
 
-### 7.2 Handle request on the server
+### 7.2. Handle request on the server
 
 _ServerListener.java_
 ```java
@@ -731,7 +741,7 @@ public class PlayerJoinedLobbyPacket {
 }
 ```
 
-### 7.3 Handle response on the client
+### 7.3. Handle response on the client
 
 #### 7.3.1. Handle response
 
