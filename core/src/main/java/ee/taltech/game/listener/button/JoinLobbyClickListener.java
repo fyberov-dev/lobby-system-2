@@ -2,7 +2,7 @@ package ee.taltech.game.listener.button;
 
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
-import ee.taltech.game.Main;
+import ee.taltech.game.network.ClientLauncher;
 import ee.taltech.game.shared.packet.JoinLobbyPacket;
 import lombok.AllArgsConstructor;
 
@@ -13,6 +13,6 @@ public class JoinLobbyClickListener extends ClickListener {
 
     @Override
     public void clicked(InputEvent event, float x, float y) {
-        Main.getInstance().getClient().sendUDP(new JoinLobbyPacket(lobbyId));
+        ClientLauncher.getInstance().sendUDP(new JoinLobbyPacket(lobbyId));
     }
 }

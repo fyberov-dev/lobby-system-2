@@ -3,11 +3,11 @@ package ee.taltech.game.screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-
-import ee.taltech.game.Main;
 import ee.taltech.game.listener.button.CreateLobbyClickListener;
 import ee.taltech.game.listener.button.JoinLobbyClickListener;
+import ee.taltech.game.network.ClientLauncher;
 import ee.taltech.game.shared.lobby.Lobby;
+import ee.taltech.game.shared.packet.GetLobbiesPacket;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class LobbiesListScreen extends Screen {
 
         stage.addActor(table);
 
-        Main.getInstance().getLobbies();
+        ClientLauncher.getInstance().sendUDP(new GetLobbiesPacket());
     }
 
     public void addLobby(Lobby lobby) {
@@ -47,5 +47,10 @@ public class LobbiesListScreen extends Screen {
     public void removeLobby(int lobbyId) {
         Table lobby = lobbyActors.remove(lobbyId);
         lobbies.removeActor(lobby);
+    }
+
+    public void clearLobbies() {
+        lobbies.clear();
+        lobbyActors.clear();
     }
 }

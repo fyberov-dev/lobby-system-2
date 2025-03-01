@@ -1,13 +1,11 @@
 package ee.taltech.game.listener;
 
-import com.badlogic.gdx.Game;
 import com.esotericsoftware.kryonet.Connection;
 import com.esotericsoftware.kryonet.Listener;
 import ee.taltech.game.Main;
 import ee.taltech.game.shared.packet.CreateLobbyPacket;
 import ee.taltech.game.shared.packet.DeleteLobbyPacket;
 import ee.taltech.game.shared.packet.GetLobbiesPacket;
-import ee.taltech.game.shared.packet.JoinLobbyPacket;
 import ee.taltech.game.shared.packet.LeaveLobbyPacket;
 import ee.taltech.game.shared.packet.PlayerJoinedLobbyPacket;
 import ee.taltech.game.shared.packet.RegisterPlayerPacket;
