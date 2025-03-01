@@ -67,6 +67,12 @@ public class Main extends Game {
         Gdx.app.postRunnable(new SetScreenRunnable(new LobbiesListScreen()));
     }
 
+    public void removePlayer(int id) {
+        if (getScreen() instanceof LobbyScreen lobbyScreen) {
+            lobbyScreen.removePlayer(id);
+        }
+    }
+
     public void getLobbies() {
         client.sendUDP(new GetLobbiesPacket());
     }

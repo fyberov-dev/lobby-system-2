@@ -691,9 +691,12 @@ public void joinLobby(Player player, Lobby lobby) {
 
 _LobbyScreen.java_
 ```java
+private final Map<Integer, Actor> players = new HashMap<>();
+
 public void addPlayer(Player player) {
     Label playerNameLabel = new Label(player.getName(), skin);
     playersTable.add(playerNameLabel).expandX().fillX();
+    players.put(player.getId(), playerNameLabel);
     playersTable.row();
 }
 ```
@@ -711,7 +714,48 @@ protected void createInterface() {
 }
 ```
 
+## 7.4 Remove left player from the lobby
 
+### 7.5 Update existing code on the server
+
+_Game.java_
+```java
+public void leaveLobby(int playerId, int lobbyId) {
+    ...
+    if (lobby.getPlayersNumber() == 0) {
+        ...
+    } else {
+        ServerLauncher.getInstance().sendToAllExceptUDP(playerId, new LeaveLobbyPacket(playerId));
+    }
+}
+```
+
+So now, if all the players leave the lobby, it will be deleted. Otherwise, player will be removed from the lobby interface of other players
+
+### 7.6 Handle response from the server
+
+_ClientListener.java_
+```java
+case LeaveLobbyPacket packet ->
+    Main.getInstance().removePlayer(packet.getId());
+```
+
+_Main.java_
+```java
+public void removePlayer(int id) {
+    if (getScreen() instanceof LobbyScreen lobbyScreen) {
+        lobbyScreen.removePlayer(id);
+    }
+}
+```
+
+_LobbyScreen.java_
+```java
+public void removePlayer(int id) {
+    Actor player = players.remove(id);
+    playersTable.removeActor(player);
+}
+```
 
 
 
