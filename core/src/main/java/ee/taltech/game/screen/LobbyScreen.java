@@ -2,6 +2,7 @@ package ee.taltech.game.screen;
 
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
@@ -11,11 +12,15 @@ import ee.taltech.game.shared.lobby.Lobby;
 import ee.taltech.game.shared.player.Player;
 import lombok.RequiredArgsConstructor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RequiredArgsConstructor
 public class LobbyScreen extends Screen {
 
     private final Lobby lobby;
     private Table playersTable;
+    private Map<Integer, Actor> players = new HashMap<>();
 
     @Override
     protected void createInterface() {
@@ -44,7 +49,13 @@ public class LobbyScreen extends Screen {
     public void addPlayer(Player player) {
         Label playerNameLabel = new Label(player.getName(), skin);
         playersTable.add(playerNameLabel).expandX().fillX();
+        players.put(player.getId(), playerNameLabel);
         playersTable.row();
+    }
+
+    public void removePlayer(int id) {
+        Actor player = players.remove(id);
+        playersTable.removeActor(player);
     }
 
     private TextButton createBackButton() {

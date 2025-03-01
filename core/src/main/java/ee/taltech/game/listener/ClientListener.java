@@ -8,6 +8,7 @@ import ee.taltech.game.shared.packet.CreateLobbyPacket;
 import ee.taltech.game.shared.packet.DeleteLobbyPacket;
 import ee.taltech.game.shared.packet.GetLobbiesPacket;
 import ee.taltech.game.shared.packet.JoinLobbyPacket;
+import ee.taltech.game.shared.packet.LeaveLobbyPacket;
 import ee.taltech.game.shared.packet.PlayerJoinedLobbyPacket;
 import ee.taltech.game.shared.packet.RegisterPlayerPacket;
 
@@ -26,6 +27,8 @@ public class ClientListener implements Listener {
                 Main.getInstance().deleteLobby(packet.getLobbyId());
             case PlayerJoinedLobbyPacket packet ->
                 Main.getInstance().joinLobby(packet.getPlayer(), packet.getLobby());
+            case LeaveLobbyPacket packet ->
+                Main.getInstance().removePlayer(packet.getId());
             default -> System.out.println("Skipped package");
         }
     }
